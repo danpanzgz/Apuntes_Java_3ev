@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Apuntes Examen Java</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+
+  .header { background: #1a1a2e; color: white; padding: 32px 40px; }
+  .header h1 { font-size: 28px; font-weight: 700; }
+  .header p { margin-top: 6px; color: #8899bb; font-size: 14px; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+
+  .toc { background: white; border-radius: 12px; padding: 24px 28px; margin-bottom: 32px;
+         box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .toc h2 { font-size: 16px; font-weight: 700; margin-bottom: 14px; color: #1a1a2e; }
+  .toc ul { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; }
+  .toc a { text-decoration: none; background: #eef1f8; color: #3355aa; padding: 6px 14px;
+           border-radius: 20px; font-size: 13px; font-weight: 500; transition: background 0.2s; }
+  .toc a:hover { background: #3355aa; color: white; }
+
+  .section { background: white; border-radius: 12px; padding: 28px; margin-bottom: 24px;
+             box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .section-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; color: #1a1a2e;
+                   border-bottom: 3px solid #3355aa; padding-bottom: 10px; }
+
+  .card { border: 1px solid #e8ecf2; border-radius: 8px; margin-bottom: 18px; overflow: hidden; }
+  .card-header { background: #f5f7fb; padding: 12px 16px; font-weight: 600; font-size: 14px;
+                 color: #3355aa; border-bottom: 1px solid #e8ecf2; display: flex;
+                 justify-content: space-between; align-items: center; }
+  .card-body { padding: 0; }
+
+  .tip { background: #fff8e1; border-left: 4px solid #f6a800; padding: 12px 16px;
+         font-size: 13px; margin: 12px 16px 0 16px; border-radius: 0 6px 6px 0; }
+  .tip strong { color: #e67e00; }
+
+  pre { background: #1e2235; color: #cdd8f6; padding: 18px; font-size: 12.5px;
+        font-family: 'Consolas', 'Courier New', monospace; line-height: 1.6;
+        overflow-x: auto; margin: 0; }
+
+  .kw { color: #c792ea; }     /* keywords */
+  .cl { color: #82aaff; }     /* class names */
+  .st { color: #c3e88d; }     /* strings */
+  .cm { color: #546e7a; }     /* comments */
+  .nu { color: #f78c6c; }     /* numbers */
+  .me { color: #89ddff; }     /* method names */
+  .va { color: #eeffff; }     /* variables */
+
+  .badge { font-size: 11px; padding: 2px 10px; border-radius: 10px; font-weight: 600; }
+  .badge-bd { background: #dbeafe; color: #1d4ed8; }
+  .badge-file { background: #dcfce7; color: #15803d; }
+  .badge-gui { background: #fce7f3; color: #9d174d; }
+  .badge-oop { background: #fef3c7; color: #92400e; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📚 Apuntes Examen Java — Copy & Paste</h1>
+  <p>Funciones listas para usar. Solo cambia nombres de clases/tablas según el enunciado.</p>
+</div>
+
+<div class="container">
+
+  <!-- ÍNDICE -->
+  <div class="toc">
+    <h2>Índice</h2>
+    <ul>
+      <li><a href="#config">1. Conexión BD (SQLite)</a></li>
+      <li><a href="#exception">2. BDException</a></li>
+      <li><a href="#modelo">3. Clase Modelo</a></li>
+      <li><a href="#select">4. SELECT (consultas)</a></li>
+      <li><a href="#insert">5. INSERT</a></li>
+      <li><a href="#update">6. UPDATE</a></li>
+      <li><a href="#delete">7. DELETE</a></li>
+      <li><a href="#fichero">8. Fichero CSV (leer/escribir)</a></li>
+      <li><a href="#sincronizar">9. Sincronizar CSV con BD</a></li>
+      <li><a href="#consola">10. Menú por consola</a></li>
+      <li><a href="#gui">11. Interfaz gráfica (JFrame + JTable)</a></li>
+      <li><a href="#oop">12. Clases OOP (Hormiguero)</a></li>
+    </ul>
+  </div>
+
+  <!-- 1. CONEXIÓN -->
+  <div class="section" id="config">
+    <div class="section-title">1. Conexión a la Base de Datos <span class="badge badge-bd">BD</span></div>
+    <div class="tip"><strong>⚠ Cambia:</strong> la ruta del fichero .db si es distinta.</div>
+    <div class="card">
+      <div class="card-header">ConfigBDSQLite.java</div>
+      <div class="card-body">
+<pre><span class="kw">package</span> config;
+
+<span class="kw">import</span> java.sql.Connection;
+<span class="kw">import</span> java.sql.DriverManager;
+<span class="kw">import</span> java.sql.SQLException;
+
+<span class="kw">public class</span> <span class="cl">ConfigBDSQLite</span> {
+
+    <span class="kw">private static final</span> <span class="cl">String</span> URL = <span class="st">"jdbc:sqlite:data/transporte_ferroviario.db"</span>;
+
+    <span class="kw">public static</span> <span class="cl">Connection</span> <span class="me">abrirConexion</span>() <span class="kw">throws</span> <span class="cl">SQLException</span> {
+        <span class="kw">return</span> DriverManager.<span class="me">getConnection</span>(URL);
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. EXCEPCIÓN -->
+  <div class="section" id="exception">
+    <div class="section-title">2. BDException <span class="badge badge-bd">BD</span></div>
+    <div class="card">
+      <div class="card-header">BDException.java — usar siempre en los DAO</div>
+      <div class="card-body">
+<pre><span class="kw">package</span> exceptions;
+
+<span class="kw">public class</span> <span class="cl">BDException</span> <span class="kw">extends</span> <span class="cl">Exception</span> {
+    <span class="kw">public</span> <span class="cl">BDException</span>(<span class="cl">String</span> mensaje) {
+        <span class="kw">super</span>(mensaje);
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. MODELO -->
+  <div class="section" id="modelo">
+    <div class="section-title">3. Clase Modelo <span class="badge badge-oop">OOP</span></div>
+    <div class="tip"><strong>⚠ Cambia:</strong> el nombre de clase y los atributos según la tabla de la BD.</div>
+    <div class="card">
+      <div class="card-header">Ejemplo: Viajero.java (adaptar para cualquier tabla)</div>
+      <div class="card-body">
+<pre><span class="kw">package</span> modelo;
+
+<span class="kw">public class</span> <span class="cl">Viajero</span> {                       <span class="cm">// ← cambia el nombre</span>
+
+    <span class="cm">// Atributos — uno por columna de la tabla</span>
+    <span class="kw">private int</span> codigo;
+    <span class="kw">private</span> <span class="cl">String</span> nombre;
+    <span class="kw">private int</span> puntos;
+
+    <span class="cm">// Constructor completo</span>
+    <span class="kw">public</span> <span class="cl">Viajero</span>(<span class="kw">int</span> codigo, <span class="cl">String</span> nombre, <span class="kw">int</span> puntos) {
+        <span class="kw">this</span>.codigo = codigo;
+        <span class="kw">this</span>.nombre = nombre;
+        <span class="kw">this</span>.puntos = puntos;
+    }
+
+    <span class="cm">// Getters y setters — uno por atributo</span>
+    <span class="kw">public int</span> <span class="me">getCodigo</span>() { <span class="kw">return</span> codigo; }
+    <span class="kw">public</span> <span class="cl">String</span> <span class="me">getNombre</span>() { <span class="kw">return</span> nombre; }
+    <span class="kw">public int</span> <span class="me">getPuntos</span>() { <span class="kw">return</span> puntos; }
+
+    <span class="kw">public void</span> <span class="me">setCodigo</span>(<span class="kw">int</span> codigo) { <span class="kw">this</span>.codigo = codigo; }
+    <span class="kw">public void</span> <span class="me">setNombre</span>(<span class="cl">String</span> nombre) { <span class="kw">this</span>.nombre = nombre; }
+    <span class="kw">public void</span> <span class="me">setPuntos</span>(<span class="kw">int</span> puntos) { <span class="kw">this</span>.puntos = puntos; }
+
+    <span class="cm">// toString para imprimir por consola</span>
+    @Override
+    <span class="kw">public</span> <span class="cl">String</span> <span class="me">toString</span>() {
+        <span class="kw">return</span> <span class="st">"Viajero [codigo="</span> + codigo + <span class="st">", nombre="</span> + nombre + <span class="st">", puntos="</span> + puntos + <span class="st">"]"</span>;
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. SELECT -->
+  <div class="section" id="select">
+    <div class="section-title">4. Consultas SELECT <span class="badge badge-bd">BD</span></div>
+    <div class="tip"><strong>⚠ Cambia:</strong> nombre de tabla, columnas, clase modelo y condiciones WHERE.</div>
+
+    <div class="card">
+      <div class="card-header">SELECT todos — obtenerTodos()</div>
+      <div class="card-body">
+<pre><span class="kw">public</span> <span class="cl">List</span>&lt;<span class="cl">Viajero</span>&gt; <span class="me">obtenerTodos</span>() <span class="kw">throws</span> <span class="cl">BDException</span> {
+    <span class="cl">List</span>&lt;<span class="cl">Viajero</span>&gt; lista = <span class="kw">new</span> <span class="cl">ArrayList</span>&lt;&gt;();
+    <span class="cl">String</span> sql = <span class="st">"SELECT codigo, nombre, puntos FROM viajero"</span>;
+
+    <span class="kw">try</span> (<span class="cl">Connection</span> con = <span class="cl">ConfigBDSQLite</span>.<span class="me">abrirConexion</span>();
+         <span class="cl">Statement</span> st = con.<span class="me">createStatement</span>();
+         <span class="cl">ResultSet</span> rs = st.<span class="me">executeQuery</span>(sql)) {
+
+        <span class="kw">while</span> (rs.<span class="me">next</span>()) {
+            lista.<span class="me">add</span>(<span class="kw">new</span> <span class="cl">Viajero</span>(
+                rs.<span class="me">getInt</span>(<span class="st">"codigo"</span>),
+                rs.<span class="me">getString</span>(<span class="st">"nombre"</span>),
+                rs.<span class="me">getInt</span>(<span class="st">"puntos"</span>)
+            ));
+        }
+
+    } <span class="kw">catch</span> (<span class="cl">SQLException</span> e) {
+        <span class="kw">throw new</span> <span class="cl">BDException</span>(<span class="st">"Error al obtener viajeros: "</span> + e.<span class="me">getMessage</span>());
+    }
+    <span class="kw">return</span> lista;
+}</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">SELECT por código — obtenerPorCodigo(int codigo)</div>
+      <div class="card-body">
+<pre><span class="kw">public</span> <span class="cl">Viajero</span> <span class="me">obtenerPorCodigo</span>(<span class="kw">int</span> codigo) <span class="kw">throws</span> <span class="cl">BDException</span> {
+    <span class="cl">String</span> sql = <span class="st">"SELECT codigo, nombre, puntos FROM viajero WHERE codigo = ?"</span>;
+
+    <span class="kw">try</span> (<span class="cl">Connection</span> con = <span class="cl">ConfigBDSQLite</span>.<span class="me">abrirConexion</span>();
+         <span class="cl">PreparedStatement</span> ps = con.<span class="me">prepareStatement</span>(sql)) {
+
+        ps.<span class="me">setInt</span>(<span class="nu">1</span>, codigo);
+        <span class="cl">ResultSet</span> rs = ps.<span class="me">executeQuery</span>();
+
+        <span class="kw">if</span> (rs.<span class="me">next</span>()) {
+            <span class="kw">return new</span> <span class="cl">Viajero</span>(
+                rs.<span class="me">getInt</span>(<span class="st">"codigo"</span>),
+                rs.<span class="me">getString</span>(<span class="st">"nombre"</span>),
+                rs.<span class="me">getInt</span>(<span class="st">"puntos"</span>)
+            );
+        }
+
+    } <span class="kw">catch</span> (<span class="cl">SQLException</span> e) {
+        <span class="kw">throw new</span> <span class="cl">BDException</span>(<span class="st">"Error al obtener viajero: "</span> + e.<span class="me">getMessage</span>());
+    }
+    <span class="kw">return null</span>; <span class="cm">// no encontrado</span>
+}</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">SELECT con JOIN y filtros — consulta multitabla</div>
+      <div class="card-body">
+<pre><span class="cm">// Ejemplo: viajeros que han pasado por una estación en una fecha (DISTINCT + ORDER)</span>
+<span class="kw">public</span> <span class="cl">List</span>&lt;<span class="cl">Viajero</span>&gt; <span class="me">obtenerPorEstacionYFecha</span>(<span class="kw">int</span> codEstacion, <span class="cl">String</span> fecha)
+        <span class="kw">throws</span> <span class="cl">BDException</span> {
+
+    <span class="cl">List</span>&lt;<span class="cl">Viajero</span>&gt; lista = <span class="kw">new</span> <span class="cl">ArrayList</span>&lt;&gt;();
+
+    <span class="cl">String</span> sql = <span class="st">"SELECT DISTINCT v.codigo, v.nombre, v.puntos "</span> +
+                 <span class="st">"FROM viajero v "</span> +
+                 <span class="st">"JOIN billete b ON v.codigo = b.codigo_viajero "</span> +
+                 <span class="st">"WHERE (b.codigo_estacion_origen = ? OR b.codigo_estacion_destino = ?) "</span> +
+                 <span class="st">"AND b.fecha = ? "</span> +
+                 <span class="st">"ORDER BY v.nombre ASC"</span>;
+
+    <span class="kw">try</span> (<span class="cl">Connection</span> con = <span class="cl">ConfigBDSQLite</span>.<span class="me">abrirConexion</span>();
+         <span class="cl">PreparedStatement</span> ps = con.<span class="me">prepareStatement</span>(sql)) {
+
+        ps.<span class="me">setInt</span>(<span class="nu">1</span>, codEstacion);
+        ps.<span class="me">setInt</span>(<span class="nu">2</span>, codEstacion);
+        ps.<span class="me">setString</span>(<span class="nu">3</span>, fecha);
+        <span class="cl">ResultSet</span> rs = ps.<span class="me">executeQuery</span>();
+
+        <span class="kw">while</span> (rs.<span class="me">next</span>()) {
+            lista.<span class="me">add</span>(<span class="kw">new</span> <span class="cl">Viajero</span>(
+                rs.<span class="me">getInt</span>(<span class="st">"codigo"</span>),
+                rs.<span class="me">getString</span>(<span class="st">"nombre"</span>),
+                rs.<span class="me">getInt</span>(<span class="st">"puntos"</span>)
+            ));
+        }
+
+    } <span class="kw">catch</span> (<span class="cl">SQLException</span> e) {
+        <span class="kw">throw new</span> <span class="cl">BDException</span>(<span class="st">"Error: "</span> + e.<span class="me">getMessage</span>());
+    }
+    <span class="kw">return</span> lista;
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. INSERT -->
+  <div class="section" id="insert">
+    <div class="section-title">5. INSERT <span class="badge badge-bd">BD</span></div>
+    <div class="tip"><strong>⚠ Cambia:</strong> nombre de tabla, columnas y tipos de datos.</div>
+    <div class="card">
+      <div class="card-header">INSERT devolviendo el código generado</div>
+      <div class="card-body">
+<pre><span class="kw">public int</span> <span class="me">insertar</span>(<span class="kw">int</span> codViajero, <span class="cl">String</span> fecha, <span class="kw">double</span> importe)
+        <span class="kw">throws</span> <span class="cl">BDException</span> {
+
+    <span class="cl">String</span> sql = <span class="st">"INSERT INTO billete (codigo_viajero, fecha, importe) VALUES (?, ?, ?)"</span>;
+
+    <span class="kw">try</span> (<span class="cl">Connection</span> con = <span class="cl">ConfigBDSQLite</span>.<span class="me">abrirConexion</span>();
+         <span class="cl">PreparedStatement</span> ps = con.<span class="me">prepareStatement</span>(sql, <span class="cl">Statement</span>.RETURN_GENERATED_KEYS)) {
+
+        ps.<span class="me">setInt</span>(<span class="nu">1</span>, codViajero);
+        ps.<span class="me">setString</span>(<span class="nu">2</span>, fecha);
+        ps.<span class="me">setDouble</span>(<span class="nu">3</span>, importe);
+
+        <span class="kw">int</span> filas = ps.<span class="me">executeUpdate</span>();
+        <span class="kw">if</span> (filas == <span class="nu">0</span>) <span class="kw">throw new</span> <span class="cl">BDException</span>(<span class="st">"No se insertó ninguna fila."</span>);
+
+        <span class="cl">ResultSet</span> keys = ps.<span class="me">getGeneratedKeys</span>();
+        <span class="kw">if</span> (keys.<span class="me">next</span>()) <span class="kw">return</span> keys.<span class="me">getInt</span>(<span class="nu">1</span>); <span class="cm">// código generado</span>
+
+    } <span class="kw">catch</span> (<span class="cl">SQLException</span> e) {
+        <span class="kw">throw new</span> <span class="cl">BDException</span>(<span class="st">"Error al insertar: "</span> + e.<span class="me">getMessage</span>());
+    }
+    <span class="kw">throw new</span> <span class="cl">BDException</span>(<span class="st">"No se obtuvo el código generado."</span>);
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. UPDATE -->
+  <div class="section" id="update">
+    <div class="section-title">6. UPDATE <span class="badge badge-bd">BD</span></div>
+    <div class="card">
+      <div class="card-header">UPDATE de una fila por código</div>
+      <div class="card-body">
+<pre><span class="kw">public void</span> <span class="me">actualizar</span>(<span class="kw">int</span> codigo, <span class="kw">double</span> consumo, <span class="kw">int</span> porcentaje)
+        <span class="kw">throws</span> <span class="cl">BDException</span> {
+
+    <span class="cl">String</span> sql = <span class="st">"UPDATE clase SET consumo_minimo_anual = ?, porcentaje_adicional = ? WHERE codigo = ?"</span>;
+
+    <span class="kw">try</span> (<span class="cl">Connection</span> con = <span class="cl">ConfigBDSQLite</span>.<span class="me">abrirConexion</span>();
+         <span class="cl">PreparedStatement</span> ps = con.<span class="me">prepareStatement</span>(sql)) {
+
+        ps.<span class="me">setDouble</span>(<span class="nu">1</span>, consumo);
+        ps.<span class="me">setInt</span>(<span class="nu">2</span>, porcentaje);
+        ps.<span class="me">setInt</span>(<span class="nu">3</span>, codigo);
+        ps.<span class="me">executeUpdate</span>();
+
+    } <span class="kw">catch</span> (<span class="cl">SQLException</span> e) {
+        <span class="kw">throw new</span> <span class="cl">BDException</span>(<span class="st">"Error al actualizar: "</span> + e.<span class="me">getMessage</span>());
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. DELETE -->
+  <div class="section" id="delete">
+    <div class="section-title">7. DELETE <span class="badge badge-bd">BD</span></div>
+    <div class="card">
+      <div class="card-header">DELETE por código</div>
+      <div class="card-body">
+<pre><span class="kw">public void</span> <span class="me">eliminar</span>(<span class="kw">int</span> codigo) <span class="kw">throws</span> <span class="cl">BDException</span> {
+    <span class="cl">String</span> sql = <span class="st">"DELETE FROM viajero WHERE codigo = ?"</span>;
+
+    <span class="kw">try</span> (<span class="cl">Connection</span> con = <span class="cl">ConfigBDSQLite</span>.<span class="me">abrirConexion</span>();
+         <span class="cl">PreparedStatement</span> ps = con.<span class="me">prepareStatement</span>(sql)) {
+
+        ps.<span class="me">setInt</span>(<span class="nu">1</span>, codigo);
+        ps.<span class="me">executeUpdate</span>();
+
+    } <span class="kw">catch</span> (<span class="cl">SQLException</span> e) {
+        <span class="kw">throw new</span> <span class="cl">BDException</span>(<span class="st">"Error al eliminar: "</span> + e.<span class="me">getMessage</span>());
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. FICHERO CSV -->
+  <div class="section" id="fichero">
+    <div class="section-title">8. Fichero CSV — Leer y Escribir <span class="badge badge-file">Fichero</span></div>
+    <div class="tip"><strong>⚠ Cambia:</strong> clase modelo, número de campos y separador (aquí <code>;</code>).</div>
+
+    <div class="card">
+      <div class="card-header">Leer CSV → List</div>
+      <div class="card-body">
+<pre><span class="kw">public</span> <span class="cl">List</span>&lt;<span class="cl">Clase</span>&gt; <span class="me">leerClases</span>() <span class="kw">throws</span> <span class="cl">BDException</span> {
+    <span class="cl">List</span>&lt;<span class="cl">Clase</span>&gt; lista = <span class="kw">new</span> <span class="cl">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">try</span> (<span class="cl">BufferedReader</span> br = <span class="kw">new</span> <span class="cl">BufferedReader</span>(<span class="kw">new</span> <span class="cl">FileReader</span>(rutaFichero))) {
+        <span class="cl">String</span> linea;
+        <span class="kw">while</span> ((linea = br.<span class="me">readLine</span>()) != <span class="kw">null</span>) {
+            linea = linea.<span class="me">trim</span>();
+            <span class="kw">if</span> (linea.<span class="me">isEmpty</span>()) <span class="kw">continue</span>;
+
+            <span class="cl">String</span>[] partes = linea.<span class="me">split</span>(<span class="st">";"</span>);
+            <span class="kw">if</span> (partes.length &lt; <span class="nu">4</span>) <span class="kw">continue</span>; <span class="cm">// línea incompleta</span>
+
+            <span class="kw">int</span> codigo = <span class="cl">Integer</span>.<span class="me">parseInt</span>(partes[<span class="nu">0</span>].<span class="me">trim</span>());
+            <span class="cl">String</span> nombre = partes[<span class="nu">1</span>].<span class="me">trim</span>();
+            <span class="kw">double</span> consumo = <span class="cl">Double</span>.<span class="me">parseDouble</span>(partes[<span class="nu">2</span>].<span class="me">trim</span>());
+            <span class="kw">int</span> porcentaje = (<span class="kw">int</span>) <span class="cl">Double</span>.<span class="me">parseDouble</span>(partes[<span class="nu">3</span>].<span class="me">trim</span>());
+
+            lista.<span class="me">add</span>(<span class="kw">new</span> <span class="cl">Clase</span>(codigo, nombre, consumo, porcentaje));
+        }
+    } <span class="kw">catch</span> (<span class="cl">IOException</span> e) {
+        <span class="kw">throw new</span> <span class="cl">BDException</span>(<span class="st">"Error al leer fichero: "</span> + e.<span class="me">getMessage</span>());
+    }
+    <span class="kw">return</span> lista;
+}</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Escribir List → CSV</div>
+      <div class="card-body">
+<pre><span class="kw">public void</span> <span class="me">escribirClases</span>(<span class="cl">List</span>&lt;<span class="cl">Clase</span>&gt; clases) <span class="kw">throws</span> <span class="cl">BDException</span> {
+    <span class="kw">try</span> (<span class="cl">BufferedWriter</span> bw = <span class="kw">new</span> <span class="cl">BufferedWriter</span>(<span class="kw">new</span> <span class="cl">FileWriter</span>(rutaFichero))) {
+        <span class="kw">for</span> (<span class="cl">Clase</span> c : clases) {
+            bw.<span class="me">write</span>(c.<span class="me">getCodigo</span>() + <span class="st">";"</span> + c.<span class="me">getNombre</span>() + <span class="st">";"</span> +
+                    c.<span class="me">getConsumoMinimoAnual</span>() + <span class="st">";"</span> + c.<span class="me">getPorcentajeAdicional</span>());
+            bw.<span class="me">newLine</span>();
+        }
+    } <span class="kw">catch</span> (<span class="cl">IOException</span> e) {
+        <span class="kw">throw new</span> <span class="cl">BDException</span>(<span class="st">"Error al escribir fichero: "</span> + e.<span class="me">getMessage</span>());
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. SINCRONIZAR CSV CON BD -->
+  <div class="section" id="sincronizar">
+    <div class="section-title">9. Sincronizar CSV con BD <span class="badge badge-file">Fichero</span> <span class="badge badge-bd">BD</span></div>
+    <div class="tip">
+      <strong>Reglas:</strong> Actualiza las que coinciden por código. Elimina las del fichero que no están en BD. Añade las de BD que no están en fichero.
+    </div>
+    <div class="card">
+      <div class="card-header">actualizarFicheroDesdeDB()</div>
+      <div class="card-body">
+<pre><span class="kw">public void</span> <span class="me">actualizarFicheroDesdeDB</span>() <span class="kw">throws</span> <span class="cl">BDException</span> {
+    <span class="cl">AccesoClase</span> accesoClase = <span class="kw">new</span> <span class="cl">AccesoClase</span>();
+
+    <span class="cl">List</span>&lt;<span class="cl">Clase</span>&gt; clasesDB = accesoClase.<span class="me">obtenerTodas</span>();    <span class="cm">// fuente de verdad</span>
+    <span class="cl">List</span>&lt;<span class="cl">Clase</span>&gt; clasesFichero = <span class="me">leerClases</span>();            <span class="cm">// estado actual</span>
+    <span class="cl">List</span>&lt;<span class="cl">Clase</span>&gt; resultado = <span class="kw">new</span> <span class="cl">ArrayList</span>&lt;&gt;();
+
+    <span class="cm">// PASO 1: recorrer fichero → actualizar si existe en BD, descartar si no</span>
+    <span class="kw">for</span> (<span class="cl">Clase</span> cf : clasesFichero) {
+        <span class="cl">Clase</span> deBD = <span class="kw">null</span>;
+        <span class="kw">for</span> (<span class="cl">Clase</span> cdb : clasesDB) {
+            <span class="kw">if</span> (cdb.<span class="me">getCodigo</span>() == cf.<span class="me">getCodigo</span>()) { deBD = cdb; <span class="kw">break</span>; }
+        }
+        <span class="kw">if</span> (deBD != <span class="kw">null</span>) {
+            cf.<span class="me">setConsumoMinimoAnual</span>(deBD.<span class="me">getConsumoMinimoAnual</span>());
+            cf.<span class="me">setPorcentajeAdicional</span>(deBD.<span class="me">getPorcentajeAdicional</span>());
+            resultado.<span class="me">add</span>(cf);           <span class="cm">// ✅ actualizada</span>
+        }                                  <span class="cm">// si deBD==null → se descarta ❌</span>
+    }
+
+    <span class="cm">// PASO 2: añadir de BD las que no estaban en el fichero</span>
+    <span class="kw">for</span> (<span class="cl">Clase</span> cdb : clasesDB) {
+        <span class="kw">boolean</span> yaExiste = <span class="kw">false</span>;
+        <span class="kw">for</span> (<span class="cl">Clase</span> r : resultado) {
+            <span class="kw">if</span> (r.<span class="me">getCodigo</span>() == cdb.<span class="me">getCodigo</span>()) { yaExiste = <span class="kw">true</span>; <span class="kw">break</span>; }
+        }
+        <span class="kw">if</span> (!yaExiste) resultado.<span class="me">add</span>(cdb);   <span class="cm">// ✅ añadida nueva</span>
+    }
+
+    <span class="me">escribirClases</span>(resultado);
+    System.out.<span class="me">println</span>(<span class="st">"Fichero actualizado. Total: "</span> + resultado.<span class="me">size</span>());
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. MENÚ CONSOLA -->
+  <div class="section" id="consola">
+    <div class="section-title">10. Menú por Consola</div>
+    <div class="card">
+      <div class="card-header">Esqueleto del menú principal</div>
+      <div class="card-body">
+<pre><span class="kw">private static final</span> <span class="cl">Scanner</span> SC = <span class="kw">new</span> <span class="cl">Scanner</span>(System.in);
+
+<span class="kw">public static void</span> <span class="me">main</span>(<span class="cl">String</span>[] args) {
+    <span class="kw">int</span> opcion;
+    <span class="kw">do</span> {
+        System.out.<span class="me">println</span>(<span class="st">"\n1. Opción 1\n2. Opción 2\n0. Salir"</span>);
+        opcion = <span class="me">leerEntero</span>(<span class="st">"Elige: "</span>);
+        <span class="kw">switch</span> (opcion) {
+            <span class="kw">case</span> <span class="nu">1</span> -> <span class="me">opcion1</span>();
+            <span class="kw">case</span> <span class="nu">2</span> -> <span class="me">opcion2</span>();
+            <span class="kw">case</span> <span class="nu">0</span> -> System.out.<span class="me">println</span>(<span class="st">"Saliendo..."</span>);
+            <span class="kw">default</span> -> System.out.<span class="me">println</span>(<span class="st">"Opción no válida."</span>);
+        }
+    } <span class="kw">while</span> (opcion != <span class="nu">0</span>);
+}
+
+<span class="cm">// Leer entero seguro (no rompe con letras)</span>
+<span class="kw">private static int</span> <span class="me">leerEntero</span>(<span class="cl">String</span> mensaje) {
+    <span class="kw">while</span> (<span class="kw">true</span>) {
+        System.out.<span class="me">print</span>(mensaje);
+        <span class="kw">try</span> {
+            <span class="kw">return</span> <span class="cl">Integer</span>.<span class="me">parseInt</span>(SC.<span class="me">nextLine</span>().<span class="me">trim</span>());
+        } <span class="kw">catch</span> (<span class="cl">NumberFormatException</span> e) {
+            System.out.<span class="me">println</span>(<span class="st">"Introduce un número válido."</span>);
+        }
+    }
+}
+
+<span class="cm">// Leer double seguro</span>
+<span class="kw">private static double</span> <span class="me">leerDouble</span>(<span class="cl">String</span> mensaje) {
+    <span class="kw">while</span> (<span class="kw">true</span>) {
+        System.out.<span class="me">print</span>(mensaje);
+        <span class="kw">try</span> {
+            <span class="kw">return</span> <span class="cl">Double</span>.<span class="me">parseDouble</span>(SC.<span class="me">nextLine</span>().<span class="me">trim</span>());
+        } <span class="kw">catch</span> (<span class="cl">NumberFormatException</span> e) {
+            System.out.<span class="me">println</span>(<span class="st">"Introduce un número válido."</span>);
+        }
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. GUI -->
+  <div class="section" id="gui">
+    <div class="section-title">11. Interfaz Gráfica — JFrame + JTable <span class="badge badge-gui">GUI</span></div>
+    <div class="tip"><strong>⚠ Cambia:</strong> columnas de la tabla, campos de entrada y la llamada al DAO.</div>
+    <div class="card">
+      <div class="card-header">Ventana completa con campos de entrada + tabla de resultados + error</div>
+      <div class="card-body">
+<pre><span class="kw">public class</span> <span class="cl">VentanaConsulta</span> <span class="kw">extends</span> <span class="cl">JFrame</span> {
+
+    <span class="kw">private</span> <span class="cl">JTextField</span> txtCodigo;    <span class="cm">// añadir un campo por dato a leer</span>
+    <span class="kw">private</span> <span class="cl">JTextField</span> txtFecha;
+    <span class="kw">private</span> <span class="cl">JButton</span> btnConsultar;
+    <span class="kw">private</span> <span class="cl">JButton</span> btnCancelar;
+
+    <span class="kw">public</span> <span class="cl">VentanaConsulta</span>() {
+        <span class="me">setTitle</span>(<span class="st">"Consulta"</span>);
+        <span class="me">setDefaultCloseOperation</span>(<span class="cl">JFrame</span>.DISPOSE_ON_CLOSE);
+        <span class="me">setLayout</span>(<span class="kw">new</span> <span class="cl">BorderLayout</span>(<span class="nu">10</span>, <span class="nu">10</span>));
+
+        <span class="cm">// Panel de campos</span>
+        <span class="cl">JPanel</span> panelCampos = <span class="kw">new</span> <span class="cl">JPanel</span>(<span class="kw">new</span> <span class="cl">FlowLayout</span>());
+        panelCampos.<span class="me">add</span>(<span class="kw">new</span> <span class="cl">JLabel</span>(<span class="st">"Código:"</span>));
+        txtCodigo = <span class="kw">new</span> <span class="cl">JTextField</span>(<span class="nu">8</span>);
+        panelCampos.<span class="me">add</span>(txtCodigo);
+        panelCampos.<span class="me">add</span>(<span class="kw">new</span> <span class="cl">JLabel</span>(<span class="st">"Fecha:"</span>));
+        txtFecha = <span class="kw">new</span> <span class="cl">JTextField</span>(<span class="nu">10</span>);
+        panelCampos.<span class="me">add</span>(txtFecha);
+
+        <span class="cm">// Panel de botones</span>
+        <span class="cl">JPanel</span> panelBotones = <span class="kw">new</span> <span class="cl">JPanel</span>();
+        btnConsultar = <span class="kw">new</span> <span class="cl">JButton</span>(<span class="st">"Consultar"</span>);
+        btnCancelar = <span class="kw">new</span> <span class="cl">JButton</span>(<span class="st">"Cancelar"</span>);
+        panelBotones.<span class="me">add</span>(btnConsultar);
+        panelBotones.<span class="me">add</span>(btnCancelar);
+
+        <span class="cl">JPanel</span> norte = <span class="kw">new</span> <span class="cl">JPanel</span>(<span class="kw">new</span> <span class="cl">BorderLayout</span>());
+        norte.<span class="me">add</span>(panelCampos, <span class="cl">BorderLayout</span>.CENTER);
+        norte.<span class="me">add</span>(panelBotones, <span class="cl">BorderLayout</span>.SOUTH);
+        <span class="me">add</span>(norte, <span class="cl">BorderLayout</span>.NORTH);
+
+        btnCancelar.<span class="me">addActionListener</span>(e -> <span class="me">dispose</span>());
+        btnConsultar.<span class="me">addActionListener</span>(e -> <span class="me">consultar</span>());
+
+        <span class="me">setSize</span>(<span class="nu">600</span>, <span class="nu">120</span>);
+        <span class="me">setLocationRelativeTo</span>(<span class="kw">null</span>);
+        <span class="me">setVisible</span>(<span class="kw">true</span>);
+    }
+
+    <span class="kw">private void</span> <span class="me">consultar</span>() {
+        <span class="kw">int</span> codigo;
+        <span class="kw">try</span> {
+            codigo = <span class="cl">Integer</span>.<span class="me">parseInt</span>(txtCodigo.<span class="me">getText</span>().<span class="me">trim</span>());
+        } <span class="kw">catch</span> (<span class="cl">NumberFormatException</span> ex) {
+            <span class="cl">JOptionPane</span>.<span class="me">showMessageDialog</span>(<span class="kw">this</span>, <span class="st">"Código no válido."</span>,
+                <span class="st">"Error"</span>, <span class="cl">JOptionPane</span>.ERROR_MESSAGE);
+            <span class="kw">return</span>;
+        }
+        <span class="cl">String</span> fecha = txtFecha.<span class="me">getText</span>().<span class="me">trim</span>();
+
+        <span class="kw">try</span> {
+            <span class="cl">AccesoViajero</span> dao = <span class="kw">new</span> <span class="cl">AccesoViajero</span>();
+            <span class="cl">List</span>&lt;<span class="cl">Viajero</span>&gt; lista = dao.<span class="me">obtenerPorEstacionYFecha</span>(codigo, fecha);
+
+            <span class="kw">if</span> (lista.<span class="me">isEmpty</span>()) {
+                <span class="cl">JOptionPane</span>.<span class="me">showMessageDialog</span>(<span class="kw">this</span>,
+                    <span class="st">"No se encontraron resultados."</span>,
+                    <span class="st">"Error"</span>, <span class="cl">JOptionPane</span>.ERROR_MESSAGE);
+            } <span class="kw">else</span> {
+                <span class="me">mostrarTabla</span>(lista);
+            }
+
+        } <span class="kw">catch</span> (<span class="cl">BDException</span> ex) {
+            <span class="cl">JOptionPane</span>.<span class="me">showMessageDialog</span>(<span class="kw">this</span>, <span class="st">"Error BD: "</span> + ex.<span class="me">getMessage</span>(),
+                <span class="st">"Error"</span>, <span class="cl">JOptionPane</span>.ERROR_MESSAGE);
+        }
+    }
+
+    <span class="kw">private void</span> <span class="me">mostrarTabla</span>(<span class="cl">List</span>&lt;<span class="cl">Viajero</span>&gt; lista) {
+        <span class="cl">JDialog</span> dialogo = <span class="kw">new</span> <span class="cl">JDialog</span>(<span class="kw">this</span>, <span class="st">"Resultados"</span>, <span class="kw">true</span>);
+        dialogo.<span class="me">setLayout</span>(<span class="kw">new</span> <span class="cl">BorderLayout</span>());
+
+        <span class="cm">// ← CAMBIA los nombres de columnas</span>
+        <span class="cl">String</span>[] columnas = {<span class="st">"Código"</span>, <span class="st">"Nombre"</span>, <span class="st">"Puntos"</span>};
+        <span class="cl">DefaultTableModel</span> modelo = <span class="kw">new</span> <span class="cl">DefaultTableModel</span>(columnas, <span class="nu">0</span>);
+
+        <span class="kw">for</span> (<span class="cl">Viajero</span> v : lista) {
+            <span class="cm">// ← CAMBIA los getters según tus atributos</span>
+            modelo.<span class="me">addRow</span>(<span class="kw">new</span> Object[]{v.<span class="me">getCodigo</span>(), v.<span class="me">getNombre</span>(), v.<span class="me">getPuntos</span>()});
+        }
+
+        dialogo.<span class="me">add</span>(<span class="kw">new</span> <span class="cl">JScrollPane</span>(<span class="kw">new</span> <span class="cl">JTable</span>(modelo)), <span class="cl">BorderLayout</span>.CENTER);
+
+        <span class="cl">JButton</span> btnCerrar = <span class="kw">new</span> <span class="cl">JButton</span>(<span class="st">"Cerrar"</span>);
+        btnCerrar.<span class="me">addActionListener</span>(e -> dialogo.<span class="me">dispose</span>());
+        <span class="cl">JPanel</span> p = <span class="kw">new</span> <span class="cl">JPanel</span>(); p.<span class="me">add</span>(btnCerrar);
+        dialogo.<span class="me">add</span>(p, <span class="cl">BorderLayout</span>.SOUTH);
+
+        dialogo.<span class="me">setSize</span>(<span class="nu">600</span>, <span class="nu">300</span>);
+        dialogo.<span class="me">setLocationRelativeTo</span>(<span class="kw">this</span>);
+        dialogo.<span class="me">setVisible</span>(<span class="kw">true</span>);
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12. OOP -->
+  <div class="section" id="oop">
+    <div class="section-title">12. Clases OOP con contador estático <span class="badge badge-oop">OOP</span></div>
+    <div class="tip"><strong>Patrón típico:</strong> código autoincremental (OBR1, OBR2...) + array de datos por día/categoría.</div>
+    <div class="card">
+      <div class="card-header">Clase con ID autoincremental + array acumulador</div>
+      <div class="card-body">
+<pre><span class="kw">public class</span> <span class="cl">Obrera</span> {
+
+    <span class="kw">private static int</span> contador = <span class="nu">0</span>;   <span class="cm">// compartido por TODAS las instancias</span>
+    <span class="kw">private</span> <span class="cl">String</span> codigo;
+    <span class="kw">private int</span>[] datos;               <span class="cm">// array de 7 enteros (uno por día)</span>
+
+    <span class="kw">public</span> <span class="cl">Obrera</span>() {
+        contador++;
+        <span class="kw">this</span>.codigo = <span class="st">"OBR"</span> + contador;  <span class="cm">// OBR1, OBR2, OBR3...</span>
+        <span class="kw">this</span>.datos = <span class="kw">new int</span>[<span class="nu">7</span>];         <span class="cm">// inicializado a 0 automáticamente</span>
+    }
+
+    <span class="cm">// Acumula un valor aleatorio en el índice indicado</span>
+    <span class="kw">public void</span> <span class="me">conseguirComida</span>(<span class="kw">int</span> dia) {
+        <span class="kw">if</span> (dia &lt; <span class="nu">0</span> || dia &gt; <span class="nu">6</span>) <span class="kw">return</span>;
+        datos[dia] += (<span class="kw">int</span>) (Math.<span class="me">random</span>() * <span class="nu">10</span>); <span class="cm">// 0-9</span>
+    }
+
+    <span class="cm">// Suma todos los elementos del array</span>
+    <span class="kw">public int</span> <span class="me">totalAcumulada</span>() {
+        <span class="kw">int</span> total = <span class="nu">0</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> d : datos) total += d;
+        <span class="kw">return</span> total;
+    }
+
+    <span class="kw">public</span> <span class="cl">String</span> <span class="me">getCodigo</span>() { <span class="kw">return</span> codigo; }
+    <span class="kw">public int</span>[] <span class="me">getDatos</span>() { <span class="kw">return</span> datos; }
+}</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Clase contenedora con array de objetos</div>
+      <div class="card-body">
+<pre><span class="kw">public class</span> <span class="cl">Hormiguero</span> {
+
+    <span class="kw">private</span> <span class="cl">Obrera</span>[] obreras;
+    <span class="kw">private int</span> numObreras;
+
+    <span class="kw">public</span> <span class="cl">Hormiguero</span>(<span class="kw">int</span> capacidad) {
+        obreras = <span class="kw">new</span> <span class="cl">Obrera</span>[capacidad];
+        numObreras = <span class="nu">0</span>;
+    }
+
+    <span class="cm">// Añadir elemento al array</span>
+    <span class="kw">public</span> <span class="cl">Obrera</span> <span class="me">añadir</span>() {
+        <span class="kw">if</span> (numObreras >= obreras.length) { System.out.<span class="me">println</span>(<span class="st">"Lleno."</span>); <span class="kw">return null</span>; }
+        <span class="cl">Obrera</span> nueva = <span class="kw">new</span> <span class="cl">Obrera</span>();
+        obreras[numObreras++] = nueva;
+        <span class="kw">return</span> nueva;
+    }
+
+    <span class="cm">// Obtener el de mayor valor (patrón máximo)</span>
+    <span class="kw">public</span> <span class="cl">Obrera</span> <span class="me">conMasComida</span>() {
+        <span class="kw">if</span> (numObreras == <span class="nu">0</span>) <span class="kw">return null</span>;
+        <span class="cl">Obrera</span> max = obreras[<span class="nu">0</span>];
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">1</span>; i &lt; numObreras; i++) {
+            <span class="kw">if</span> (obreras[i].<span class="me">totalAcumulada</span>() > max.<span class="me">totalAcumulada</span>()) max = obreras[i];
+        }
+        <span class="kw">return</span> max;
+    }
+
+    <span class="cm">// Suma total de todos los elementos</span>
+    <span class="kw">public int</span> <span class="me">totalHormiguero</span>() {
+        <span class="kw">int</span> total = <span class="nu">0</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i &lt; numObreras; i++) total += obreras[i].<span class="me">totalAcumulada</span>();
+        <span class="kw">return</span> total;
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
